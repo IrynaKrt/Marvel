@@ -1,6 +1,7 @@
 class MarvelService {
     _apiBase = 'https://gateway.marvel.com:443/v1/public/'; //такой синтаксис говорит, что эти значения менять нельзя!
-    _apiKey = 'apikey=e5a7c35d5e11dc243a894f2e791957c1'
+    _apiKey = 'apikey=e5a7c35d5e11dc243a894f2e791957c1';
+    _baseCharOffset = 210;
     getResource = async (url) => {
         let res = await fetch(url);
 
@@ -11,8 +12,8 @@ class MarvelService {
         return await res.json();
     };
 
-    getAllCharacters = async () => { //вызов функции с определенным адрессом - получение всех персонажей для карточек
-        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`);
+    getAllCharacters = async (offset = this._baseCharOffset) => { //вызов функции с определенным адрессом - получение всех персонажей для карточек
+        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`);
         return res.data.results.map(this._transformCharacter);
     };
 
