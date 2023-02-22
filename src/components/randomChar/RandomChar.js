@@ -1,52 +1,40 @@
 import {useState, useEffect} from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
-const RandomChar = (props) => {
+const RandomChar = () => {
 
     const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
 
-    const marvelService = new MarvelService();
+    const {loading, error, getCharacter, clearError} = useMarvelService();
 
     useEffect(() => {
         updateChar();
-    }, []);
+        const timerId = setInterval(updateChar, 60000);
 
-    const onCharLoaded = () => {
-        setChar(char  => true);
-        setLoading(loading => false);
-    }
+        return () => {
+            clearInterval(timerId)
+        }
+    }, [])
 
-    const onCharLoading = () => {
-        setLoading(loading => true);
-    }
-
-    const onError = () => {
-        setLoading(loading => false);
-        setError(error => true);
+    const onCharLoaded = (char) => {
+        setChar(char);
     }
 
     const updateChar = () => {
+        clearError(); //очищает ошибка прошлого запроса
         const id = Math.floor(Math.random() * (1011400 - 1011000)+ 1011000);
-        onCharLoading(); // перед тем как отправить запрос ставим спиннер, чтобы было понятно, что запрос идет
-        marvelService.getCharacter(id)
-                     .then(onCharLoaded)
-                     .catch(onError);
+        getCharacter(id)
+            .then(onCharLoaded);
     }
 
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error) ? <View char = {char}/> : null;
-
-    // if(loading) {
-    //     return <Spinner/> //условный рендеринг
-    // }
+    const content = !(loading || error || !char) ? <View char={char} /> : null;
 
     return (
         <div className="randomchar">
@@ -61,8 +49,8 @@ const RandomChar = (props) => {
                 <p className="randomchar__title">
                     Or choose another one
                 </p>
-                <button className="button button__main">
-                    <div className="inner" onClick={updateChar}>try it</div>
+                <button onClick={updateChar} className="button button__main">
+                    <div className="inner">try it</div>
                 </button>
                 <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
             </div>
@@ -73,10 +61,9 @@ const RandomChar = (props) => {
 const View = ({char}) => {
     const {name, description, thumbnail, homepage, wiki} = char;
     let imgStyle = {'objectFit' : 'cover'};
-    if (thumbnail.includes('image_not_available')) {
+    if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = {'objectFit' : 'contain'};
     }
-
 
     return (
         <div className="randomchar__block">

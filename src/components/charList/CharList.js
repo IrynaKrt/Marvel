@@ -3,51 +3,44 @@ import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import './charList.scss';
 
 const CharList = (props) => {
     const [charList, setCharList] = useState([]);
     const [offset, setOffset] = useState(210);
-    const [loading, setLoading] = useState(true);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [charEnded, setCharEnded] = useState(false);
-    const [error, setError] = useState(false);
 
-    const marvelService = new MarvelService();
+    const {loading, error, getAllCharacters} = useMarvelService();
 
     useEffect(() => {
         if (offset < 219) {
-            onRequest();
+            onRequest(offset, true);
           }
     }, []);
 
-    useEffect(() => {
-        window.addEventListener('scroll', onScroll);
-        // return () => window.removeEventListener('scroll', onScroll);
-      }, []);
+    // useEffect(() => {
+    //     window.addEventListener('scroll', onScroll);
+    //     // return () => window.removeEventListener('scroll', onScroll);
+    //   }, []);
 
-    const onScroll = () => {
-        if (offset < 219) return;
-        if (newItemLoading) return;
-        if (charEnded) {
-            window.removeEventListener("scroll", onScroll);
-        }
+    // const onScroll = () => {
+    //     if (offset < 219) return;
+    //     if (newItemLoading) return;
+    //     if (charEnded) {
+    //         window.removeEventListener("scroll", onScroll);
+    //     }
 
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-            onRequest(offset);
-        }
-    };
+    //     if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+    //         onRequest(offset);
+    //     }
+    // };
 
-    const onRequest = (offset) => {
-        onCharListLoading();
-        marvelService.getAllCharacters(offset)
-            .then(onCharListLoaded)
-            .catch(onError);
-    }
-
-    const onCharListLoading = () => {
-        setNewItemLoading(true);
+    const onRequest = (offset, initial) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);
+        getAllCharacters(offset)
+            .then(onCharListLoaded);
     }
 
     const onCharListLoaded = (newCharList) => {
@@ -58,14 +51,8 @@ const CharList = (props) => {
 
         setCharList(charList => [...charList, ...newCharList]);
         setOffset(offset => offset + 9);
-        setLoading(false);
         setNewItemLoading(newItemLoading => false);
         setCharEnded(charEnded => ended)
-    }
-
-    const onError = () => {
-        setError(true);
-        setLoading(false);
     }
 
     const itemRefs = useRef([]);
@@ -116,14 +103,14 @@ const CharList = (props) => {
     const items = renderItems(charList);
 
     const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error) ? items : null;
+    const spinner = loading && !newItemLoading ? <Spinner/> : null;
+    //контнт теперь не нужен, иначе ВСЕ айтемы будут заново перерисовываться
 
     return (
         <div className="char__list">
             {errorMessage}
             {spinner}
-            {content}
+            {items}
             <button className="button button__main button__long"
                     disabled={newItemLoading}
                     style={{'display': charEnded? 'none' : 'block'}}
