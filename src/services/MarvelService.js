@@ -54,7 +54,7 @@ const useMarvelService = () => {
 			// optional chaining operator
 			price: comics.prices[0].price
 				? `${comics.prices[0].price}$`
-				: "not available",
+				: "Not on sale",
 		};
 	};
 
