@@ -1,7 +1,7 @@
 import { useHttp } from "../hooks/http.hook";
 
 const useMarvelService = () => {
-    const {loading, request, error, clearError} = useHttp();
+    const {request, clearError, process, setProcess} = useHttp();
 
     const _apiBase = 'https://gateway.marvel.com:443/v1/public/'; //такой синтаксис говорит, что эти значения менять нельзя!
     const _apiKey = 'apikey=e5a7c35d5e11dc243a894f2e791957c1';
@@ -61,7 +61,7 @@ const useMarvelService = () => {
 		};
 	};
 
-    return {loading, error, getCharacter, getCharacterByName, getAllCharacters, clearError, getComics, getAllComics}
+    return {process, setProcess, getCharacter, getCharacterByName, getAllCharacters, clearError, getComics, getAllComics}
 }
 
 export default useMarvelService;
