@@ -1,5 +1,5 @@
 # Marvel
-##### https://irynakrt.github.io/Marvel/build
+##### https://my-marvel-react.netlify.app/
 # Iryna Sittsava
 ## Student & future full-stack developer
 
