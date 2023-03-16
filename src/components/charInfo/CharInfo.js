@@ -1,4 +1,5 @@
 import {useState, useEffect} from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import setContent from '../../utils/setContent';
@@ -72,12 +73,15 @@ const View = ({data}) => {
                 {comics.length > 0 ? null : 'The Avengers haven\'t seen this character yet'}
                 {
                     comics.map((item, i) => {
+                        console.log(item);
                         // eslint-disable-next-line
                         if (i > 9) return;
                         return (
-                            <li key={i} className="char__comics-item">
-                                {item.name}
-                            </li>
+                            <Link to={`/comics/${item.resourceURI.slice(-5)}`} className="char__comics-item">
+                                <li key={i}>
+                                    {item.name}
+                                </li>
+                            </Link>
                         )
                     })
                 }

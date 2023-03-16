@@ -5,9 +5,6 @@ import useMarvelService from '../../services/MarvelService';
 import setContent from '../../utils/setContent';
 import AppBanner from "../appBanner/AppBanner";
 
-// Хотелось бы вынести функцию по загрузке данных как отдельный аргумент
-// Но тогда мы потеряем связь со стэйтами загрузки и ошибки
-// А если вынесем их все в App.js - то они будут одни на все страницы
 
 const SinglePage = ({Component, dataType}) => {
         const {id} = useParams();

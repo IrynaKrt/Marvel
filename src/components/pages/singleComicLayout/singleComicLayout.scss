@@ -32,8 +32,16 @@
         font-weight: bold;
         font-size: 18px;
         line-height: 24px;
+        border-bottom: 1px dashed $main-color;
         &:hover {
             color: $main-color;
+            border-bottom: 1px solid #000;
         }
     }
+}
+
+.back {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
 }
